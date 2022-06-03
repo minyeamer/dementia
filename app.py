@@ -65,7 +65,6 @@ def main():
         else:
             st.write('파일을 업로드 해주세요.')
 
-
     ##############################################################
     ########################### Result ###########################
     ##############################################################
@@ -76,8 +75,6 @@ def main():
             select_df = df[(df['EMAIL'] == email) & (df['요약 날짜'] == sdate)]
         else:
             select_df = df[(df['EMAIL'] == email)]
-        st.dataframe(select_df)
-        st.markdown('---')
 
         ##############################################################
         ######################## Graph Chart #########################
@@ -120,6 +117,9 @@ def main():
             sleep_df = pd.DataFrame(dict(theta=labels,r=values))
             sleep_score_chart = px.line_polar(sleep_df, r='r', theta='theta', line_close=True, range_r=[0,100])
             st.write(sleep_score_chart)
+
+        st.markdown('---')
+        st.dataframe(select_df)
     else:
         pass
 
