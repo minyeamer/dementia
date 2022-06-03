@@ -11,24 +11,31 @@ def main():
 
     st.set_page_config(layout="wide")
 
-    st.session_state
-    st.markdown('---')
-
     ##############################################################
     ########################### Header ###########################
     ##############################################################
 
-    c1, c2, c3, c4, c5 = st.columns([1,1,1,1,1])
-    with c1:
-        st.image('https://cdn-icons-png.flaticon.com/512/236/236831.png', use_column_width='auto')
-    with c2:
-        st.markdown("""이메일 주소   
-                    nia+404@rowan.kr""")
-    with c3:
-        st.write(date.today().strftime('%Y-%m-%d'))
-    with c4:
+    icon, upload = st.columns([1,3])
+    with icon:
+        st.image('https://www.freeiconspng.com/thumbs/human-icon-png/person-outline-icon-png-person-outline-icon-png-person-17.png', width=200)
+    with upload:
         file = st.file_uploader('upload csv', type=['csv','xlsx'], accept_multiple_files=False, key='file')
-    with c5:
+        if file:
+            df = pd.read_csv(file)
+
+    icon, email, sdate, pred = st.columns([1,1,1,1])
+    with email:
+        if file:
+            email = st.selectbox('이메일 주소', df.EMAIL.drop_duplicates().tolist(), key='email')
+        else:
+            st.write('이메일 주소')
+    with sdate:
+        if file:
+            sdate = st.selectbox('일자', ['전체']+df['요약 날짜'].tolist(), key='sdate')
+        else:
+            st.write('일자')
+        # st.write(date.today().strftime('%Y-%m-%d'))
+    with pred:
         if file:
             st.write('분석결과 치매일 확률은 23.54% 입니다.')
         else:
@@ -41,7 +48,10 @@ def main():
 
     if file:
         st.markdown('---')
-        df = pd.read_csv(file)
+        if sdate != '전체':
+            df = df[(df['EMAIL'] == email) & (df['요약 날짜'] == sdate)]
+        else:
+            df = df[(df['EMAIL'] == email)]
         st.dataframe(df)
         st.markdown('---')
 
@@ -78,13 +88,13 @@ def main():
             labels = ['활동 점수', '활동 목표달성 점수', '활동 유지 점수', '운동 빈도 점수', '운동 볼륨 점수']
             values = [df[label].mean().round(2) for label in labels]
             active_df = pd.DataFrame(dict(theta=labels,r=values))
-            active_score_chart = px.line_polar(active_df, r='r', theta='theta', line_close=True)
+            active_score_chart = px.line_polar(active_df, r='r', theta='theta', line_close=True, range_r=[0,100])
             st.write(active_score_chart)
         with radar_right:
-            labels = ['수면 종합 점수', '수면 시기 점수', '깊은 수면 점수', '수면 방해 점수', '수면 효율 점수', '수면 잠복 점수', '램수면 점수', '수면 시간 기여 점수']
+            labels = ['램수면 점수', '깊은 수면 점수', '수면 시기 점수', '수면 방해 점수', '수면 효율 점수', '수면 잠복 점수'   ]
             values = [df[label].mean().round(2) for label in labels]
             sleep_df = pd.DataFrame(dict(theta=labels,r=values))
-            sleep_score_chart = px.line_polar(sleep_df, r='r', theta='theta', line_close=True)
+            sleep_score_chart = px.line_polar(sleep_df, r='r', theta='theta', line_close=True, range_r=[0,100])
             st.write(sleep_score_chart)
     else:
         pass
