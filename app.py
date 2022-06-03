@@ -31,7 +31,7 @@ def make_input_data(df: pd.DataFrame, email: str) -> np.ndarray:
 
 def main():
 
-    model = load_keras_model('best_modelf1_acc.h5')
+    model = load_keras_model('best_modelacc.h5')
     st.set_page_config(layout="wide")
 
     ##############################################################
