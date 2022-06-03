@@ -60,7 +60,7 @@ def main():
         if file:
             input_data = make_input_data(df, email)
             pred = model.predict(input_data)
-            output = (CLASS[np.argmax(pred)], round(max(pred[0]),2))
+            output = (CLASS[np.argmax(pred)], np.round(np.max(pred[0])*100,2))
             st.write(f'분석결과 {output[1]}% 확률로 {output[0]} 입니다.')
         else:
             st.write('파일을 업로드 해주세요.')
